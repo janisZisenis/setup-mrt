@@ -3,8 +3,7 @@ description: 'Setup the MRT binary on the GitHub runner'
 inputs:
   version:
     description: 'Version of MRT to install'
-    required: false
-    default: 0.1.0
+    required: true
 runs:
   using: 'node20'
   main: 'src/main.js'
