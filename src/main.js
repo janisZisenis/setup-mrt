@@ -27,9 +27,9 @@ async function run() {
         let url;
 
         if (platform === 'darwin') {
-            url = `https://github.com/janisZisenis/multi-repo-tool/releases/download/v${version}/mrt-darwin-amd64`;
+            url = `https://github.com/janisZisenis/mrt-cli/releases/download/v${version}/mrt-darwin-amd64`;
         } else if (platform === 'linux') {
-            url = `https://github.com/janisZisenis/multi-repo-tool/releases/download/v${version}/mrt-linux-amd64`;
+            url = `https://github.com/janisZisenis/mrt-cli/releases/download/v${version}/mrt-linux-amd64`;
         } else {
             throw new Error(`Unsupported platform: ${platform}`);
         }
