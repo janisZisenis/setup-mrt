@@ -1,10 +1,10 @@
 # setup-mrt
 
-The `setup-mrt` is a GitHub Action that sets up the [*Multi-Repository-Tool*](https://github.com/janisZisenis/mrt-cli) in your workflow enabling the Github runner to run your automation scripts usint `mrt`.
+The `setup-mrt` is a GitHub Action that sets up the [*Multi Repository Tool*](https://github.com/janisZisenis/mrt-cli) in your workflow enabling the Github runner to run your automation scripts usint `mrt`.
 
 ## Features
 
-- Installs and sets up the *Multi-Repository-Tool*
+- Installs and sets up the *Multi Repository Tool*
 - Caches the installed binaries for subsequent pipeline runs
 
 ## Usage
