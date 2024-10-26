@@ -1,7 +1,7 @@
 name: 'Setup MRT'
 description: 'Setup the MRT binary on the GitHub runner'
 inputs:
-  version:
+  mrt-version:
     description: 'Version of MRT to install'
     required: true
 runs:

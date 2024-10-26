@@ -8,7 +8,7 @@ const os = require('os');
 
 async function run() {
     try {
-        const version = core.getInput('version');
+        const version = core.getInput('mrt-version');
         const platform = os.platform();
         const cacheKey = `mrt-${version}-${platform}`;
         const binDir = path.join(os.homedir(), 'bin');
