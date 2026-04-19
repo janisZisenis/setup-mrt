@@ -1,64 +1,32 @@
-const cache = require('@actions/cache');
+const tc = require('@actions/tool-cache');
 const core = require('@actions/core');
-const exec = require('@actions/exec');
-const fetch = require('node-fetch');
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
 
 async function run() {
     try {
         const version = core.getInput('mrt-version');
-        const platform = os.platform();
-        const cacheKey = `mrt-${version}-${platform}`;
-        const binDir = path.join(os.homedir(), 'bin');
-        const binPath = path.join(binDir, 'mrt');
+        const platform = process.platform;
 
-        // Restore cache
-        const cacheId = await cache.restoreCache([binDir], cacheKey);
-        if (cacheId) {
-            core.info(`Cache hit for key: ${cacheKey}`);
-            core.addPath(binDir);
-            await exec.exec('mrt', ['version']);
-            return;
-        }
-
-        core.info(`Cache miss for key: ${cacheKey}`);
-        let url;
-
-        if (platform === 'darwin') {
-            url = `https://github.com/janisZisenis/mrt-cli/releases/download/v${version}/mrt-darwin-amd64`;
-        } else if (platform === 'linux') {
-            url = `https://github.com/janisZisenis/mrt-cli/releases/download/v${version}/mrt-linux-amd64`;
-        } else {
+        if (platform !== 'linux' && platform !== 'darwin') {
             throw new Error(`Unsupported platform: ${platform}`);
         }
 
-        if (!fs.existsSync(binDir)){
-            fs.mkdirSync(binDir);
+        let mrtPath = tc.find('mrt', version, 'x64');
+
+        if (mrtPath) {
+            core.info(`Found mrt ${version} in tool cache`);
+        } else {
+            core.info(`Downloading mrt ${version} for ${platform}`);
+
+            const url = `https://github.com/janisZisenis/mrt-cli/releases/download/v${version}/mrt-${platform}-amd64`;
+            const downloadPath = await tc.downloadTool(url);
+            mrtPath = await tc.cacheFile(downloadPath, 'mrt', 'mrt', version, 'x64');
+
+            core.info(`MRT version ${version} installed successfully`);
         }
 
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`Failed to download MRT binary: ${response.statusText}`);
-        }
-
-        const fileStream = fs.createWriteStream(binPath);
-        await new Promise((resolve, reject) => {
-            response.body.pipe(fileStream);
-            response.body.on("error", reject);
-            fileStream.on("finish", resolve);
-        });
-
-        fs.chmodSync(binPath, '0755');
-        core.addPath(binDir);
-
-        // Save cache
-        await cache.saveCache([binDir], cacheKey);
-
-        core.info(`MRT version ${version} installed successfully`);
+        core.addPath(mrtPath);
     } catch (error) {
-        core.setFailed(`Action failed with error ${error}`);
+        core.setFailed(`Action failed with error: ${error.message}`);
     }
 }
 
