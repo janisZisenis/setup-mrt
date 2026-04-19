@@ -1,5 +1,6 @@
 const tc = require('@actions/tool-cache');
 const core = require('@actions/core');
+const fs = require('fs');
 
 async function run() {
     try {
@@ -19,6 +20,7 @@ async function run() {
 
             const url = `https://github.com/janisZisenis/mrt-cli/releases/download/v${version}/mrt-${platform}-amd64`;
             const downloadPath = await tc.downloadTool(url);
+            fs.chmodSync(downloadPath, '0755');
             mrtPath = await tc.cacheFile(downloadPath, 'mrt', 'mrt', version, 'x64');
 
             core.info(`MRT version ${version} installed successfully`);
